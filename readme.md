@@ -10,15 +10,19 @@ Simple anime search and preview.
 
 ## To do
 
--   Main page with search - React & GraphQL & Apollo practice
+⬛ Main page with search - React & GraphQL & Apollo practice
 
--   Server-side render for anime pages - SSR & Next.js practice
+⬛ Server-side render for anime pages - SSR & Next.js practice
 
--   Pre-commit hooks - Husky & ESLint & Stylelint practice
+⬛ Generate d.ts for sass
 
 ## Done
 
-Nothing
+✅ Pre-commit hooks - Husky & ESLint & Stylelint practice
+
+## Possible continuations
+
+⬛ Tag cloud (three.js?)
 
 ## Stack
 

@@ -1,10 +1,19 @@
 import * as React from 'react';
-import styles from './index.module.scss';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import Main from '../components/main';
+import { CssBaseline } from '@material-ui/core';
 
-const Root = (): JSX.Element => (
-    <div className={styles.rootContainer}>
-        This is sample Graphql app with Typescript
-    </div>
-);
+const Root = (): JSX.Element => {
+    const client = new ApolloClient({
+        uri: 'https://graphql.anilist.co/',
+        cache: new InMemoryCache()
+    });
+    return (
+        <ApolloProvider client={client}>
+            <CssBaseline />
+            <Main />
+        </ApolloProvider>
+    );
+};
 
 export default Root;

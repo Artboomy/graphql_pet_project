@@ -1,0 +1,18 @@
+.searchRow {
+    display: flex;
+    align-items: baseline;
+}
+
+.searchWrapper {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding-left: 8px;
+}
+
+.searchInput {
+    // TODO: bad practice
+    color: white !important;
+}
+
+.searchInputInput {
+    padding: 8px;
+}
