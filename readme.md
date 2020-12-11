@@ -1,8 +1,16 @@
-# Pet project
+# Graphql pet project
 
 ## Description
 
-Simple anime search and preview.
+The goal of this project is to get some practice with various frameworks.
+
+Project consists of simple web application.
+
+GUI is written in React + MaterialUI.
+
+Server-side rendering provided by Next.js.
+
+3rd party Graphql API is used for data.
 
 ## 3rd party API
 
@@ -23,23 +31,3 @@ Simple anime search and preview.
 ## Possible continuations
 
 ⬛ Tag cloud (three.js?)
-
-## Stack
-
-Typescript
-
-React
-
-GraphQL
-
-Apollo
-
-ESLint
-
-Stylelint
-
-Husky
-
-Sass
-
-Next.js
