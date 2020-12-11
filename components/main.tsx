@@ -18,16 +18,16 @@ const Main = (): JSX.Element => {
     // Two variables are necessary, so search will trigger only by button click
     const [searchText, setText] = useState('');
     const [listText, setListText] = useState('');
-    const [open, setOpen] = React.useState(false);
+    const [warningOpen, setWarningOpen] = React.useState(false);
     const loadMedia = () => {
         if (searchText) {
             setListText(searchText);
         } else {
-            setOpen(true);
+            setWarningOpen(true);
         }
     };
     const handleClose = () => {
-        setOpen(false);
+        setWarningOpen(false);
     };
     return (
         <>
@@ -59,7 +59,7 @@ const Main = (): JSX.Element => {
                                 Search
                             </Button>
                             <Snackbar
-                                open={open}
+                                open={warningOpen}
                                 autoHideDuration={2000}
                                 onClose={handleClose}>
                                 <Alert severity='warning'>
@@ -70,19 +70,17 @@ const Main = (): JSX.Element => {
                     </Box>
                 </Toolbar>
             </AppBar>
-            {listText ? (
-                <Container>
+            <Container>
+                {listText ? (
                     <List search={listText} />
-                </Container>
-            ) : (
-                <Container>
+                ) : (
                     <Box pt={8}>
                         <Typography variant={'h2'} align={'center'}>
                             Welcome!
                         </Typography>
                     </Box>
-                </Container>
-            )}
+                )}
+            </Container>
         </>
     );
 };

@@ -1,10 +1,15 @@
 import * as React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { SearchAnime, SearchAnime_Page } from '../types/SearchAnime';
+import {
+    SearchAnime,
+    SearchAnime_Page,
+    SearchAnime_Page_media
+} from '../types/SearchAnime';
+import styles from './list.module.scss';
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
     Box,
-    Container,
+    createMuiTheme,
     Link,
     Paper,
     Table,
@@ -19,6 +24,18 @@ import ErrorView from './error';
 
 interface IProps {
     search: string;
+}
+
+interface IListData {
+    id: number;
+    title: JSX.Element;
+    score: JSX.Element;
+    episodeCount: JSX.Element;
+    season: JSX.Element;
+}
+
+function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+    return value !== null && value !== undefined;
 }
 
 const SEARCH = gql`
@@ -46,18 +63,29 @@ const SEARCH = gql`
         }
     }
 `;
-const loadingRender = () => (
-    <Container>
-        {Array(10).fill(
-            <Skeleton
-                variant='text'
-                height={53}
-                component={'div'}
-                animation={'wave'}
-            />
-        )}
-    </Container>
-);
+
+const loadingRender = () => {
+    const skeleton = (
+        <Skeleton
+            variant='text'
+            component={'div'}
+            animation={'wave'}
+            height={36}
+        />
+    );
+    const skeletonRows: IListData[] = Array(5)
+        .fill(null)
+        .map((_, idx) => {
+            return {
+                id: idx,
+                title: skeleton,
+                episodeCount: skeleton,
+                score: skeleton,
+                season: skeleton
+            };
+        });
+    return tableRender(skeletonRows);
+};
 
 const emptyRender = () => (
     <Box
@@ -72,6 +100,58 @@ const emptyRender = () => (
     </Box>
 );
 
+const tableRender = (data: IListData[]) => {
+    const tableHead = (
+        <TableHead>
+            <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align={'right'}>Episodes</TableCell>
+                <TableCell align={'right'}>Score</TableCell>
+                <TableCell align={'right'}>Season</TableCell>
+            </TableRow>
+        </TableHead>
+    );
+    const rows = data.map((item) => (
+        <TableRow key={item.id}>
+            <TableCell>{item.title}</TableCell>
+            <TableCell align={'right'} width={50}>
+                {item.episodeCount}
+            </TableCell>
+            <TableCell align={'right'} width={50}>
+                {item.score}
+            </TableCell>
+            <TableCell
+                align={'right'}
+                width={150}
+                className={styles.seasonText}>
+                {item.season}
+            </TableCell>
+        </TableRow>
+    ));
+    return (
+        <Box pt={1}>
+            <TableContainer component={Paper}>
+                <Table aria-label={'results table'}>
+                    {tableHead}
+                    <TableBody>{rows}</TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
+    );
+};
+const decorateScore = (score: number): JSX.Element => {
+    const theme = createMuiTheme();
+    let color;
+    if (score > 80) {
+        color = theme.palette.success;
+    } else if (score > 65) {
+        color = theme.palette.warning;
+    } else {
+        color = theme.palette.error;
+    }
+    return <div style={{ color: color.main }}>{`${score}%`}</div>;
+};
+
 const List = React.memo(
     (props: IProps): JSX.Element => {
         const { loading, error, data } = useQuery<SearchAnime>(SEARCH, {
@@ -81,67 +161,54 @@ const List = React.memo(
                 search: props.search
             }
         });
-        const tableHead = (
-            <TableHead>
-                <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell align={'right'}>Episodes</TableCell>
-                    <TableCell align={'right'}>Score</TableCell>
-                    <TableCell align={'right'}>Season</TableCell>
-                </TableRow>
-            </TableHead>
-        );
-        const dataRender = (page: SearchAnime_Page) => {
-            return (
-                <TableContainer component={Paper}>
-                    <Table aria-label={'results table'}>
-                        {tableHead}
-                        <TableBody>
-                            {page?.media?.map((row) => {
-                                const romaji = row?.title?.romaji;
-                                return (
-                                    <TableRow key={row?.id || 'no_id'}>
-                                        <TableCell
-                                            component={'th'}
-                                            scope={'row'}>
-                                            <Link
-                                                href={`/media/${encodeURIComponent(
-                                                    row?.id || 'no_id'
-                                                )}`}>
-                                                <div title={romaji || ''}>
-                                                    {row?.title?.english ||
-                                                        romaji ||
-                                                        'No title'}
-                                                </div>
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell align={'right'}>
-                                            {row?.episodes}
-                                        </TableCell>
-                                        <TableCell align={'right'}>
-                                            {row?.averageScore}
-                                        </TableCell>
-                                        <TableCell align={'right'}>
-                                            {`${row?.season || ''} ${
-                                                row?.seasonYear || ''
-                                            }`}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            );
+        const dataRender = (
+            media: (SearchAnime_Page_media | null)[],
+            pageInfo: SearchAnime_Page['pageInfo']
+        ) => {
+            console.info('PageInfo is ', pageInfo);
+            const mediaList: SearchAnime_Page_media[] = media.filter(notEmpty);
+            const rows: IListData[] = mediaList.map((row) => {
+                const romaji = row.title?.romaji;
+                const id = row.id;
+                const title = (
+                    <Link href={`/media/${encodeURIComponent(id)}`}>
+                        <div title={romaji || ''}>
+                            {row.title?.english || romaji || 'No title'}
+                        </div>
+                    </Link>
+                );
+                return {
+                    id,
+                    title,
+                    episodeCount: <>{row.episodes}</>,
+                    score: (
+                        <>
+                            {row?.averageScore
+                                ? decorateScore(row.averageScore)
+                                : ''}
+                        </>
+                    ),
+                    season: (
+                        <>
+                            {`${row?.season || ''} ${
+                                row?.seasonYear || ''
+                            }`.toLowerCase()}
+                        </>
+                    )
+                };
+            });
+            return tableRender(rows);
         };
+        const mediaList = data?.Page?.media || [];
+        const pageInfo = data?.Page?.pageInfo;
         return (
             <div>
                 {loading ? (
                     loadingRender()
                 ) : error ? (
                     <ErrorView errorMessage={error.message} />
-                ) : data?.Page?.media?.length ? (
-                    <Box pt={1}>{dataRender(data.Page)}</Box>
+                ) : mediaList.length && pageInfo ? (
+                    dataRender(mediaList, pageInfo)
                 ) : (
                     emptyRender()
                 )}
