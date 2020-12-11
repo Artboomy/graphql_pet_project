@@ -4,21 +4,21 @@
 
 Simple anime search and preview.
 
-## API
+## 3rd party API
 
 [AniList API](https://anilist.gitbook.io/anilist-apiv2-docs/overview/overview)
 
-## To do
-
-⬛ Main page with search - React & GraphQL & Apollo practice
-
-⬛ Server-side render for anime pages - SSR & Next.js practice
-
-⬛ Generate d.ts for sass
-
 ## Done
 
+✅ Server-side render for anime pages - SSR & Next.js practice
+
+✅ Main page with search - React & GraphQL & Apollo practice
+
 ✅ Pre-commit hooks - Husky & ESLint & Stylelint practice
+
+## To do
+
+⬛ Generate d.ts for sass
 
 ## Possible continuations
 

@@ -4,6 +4,7 @@ import { SearchAnime } from '../types/SearchAnime';
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
     Container,
+    Link,
     Paper,
     Table,
     TableBody,
@@ -32,7 +33,6 @@ const SEARCH = gql`
                 title {
                     english
                     romaji
-                    native
                 }
                 episodes
                 averageScore
@@ -86,16 +86,16 @@ const List = React.memo(
                                         <TableCell
                                             component={'th'}
                                             scope={'row'}>
-                                            <div title={romaji || ''}>
-                                                <a
-                                                    href={row?.siteUrl || '#'}
-                                                    target={'_blank'}
-                                                    rel={'noreferrer'}>
+                                            <Link
+                                                href={`/media/${encodeURIComponent(
+                                                    row?.id || 'no_id'
+                                                )}`}>
+                                                <div title={romaji || ''}>
                                                     {row?.title?.english ||
                                                         romaji ||
                                                         'No title'}
-                                                </a>
-                                            </div>
+                                                </div>
+                                            </Link>
                                         </TableCell>
                                         <TableCell align={'right'}>
                                             {row?.episodes}

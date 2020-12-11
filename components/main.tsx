@@ -6,6 +6,7 @@ import styles from './main.module.scss';
 import {
     AppBar,
     Box,
+    Container,
     InputBase,
     Snackbar,
     Toolbar,
@@ -69,7 +70,19 @@ const Main = (): JSX.Element => {
                     </Box>
                 </Toolbar>
             </AppBar>
-            {listText && <List search={listText} />}
+            {listText ? (
+                <Container>
+                    <List search={listText} />
+                </Container>
+            ) : (
+                <Container>
+                    <Box p={2}>
+                        <Typography variant={'h2'} align={'center'}>
+                            Welcome!
+                        </Typography>
+                    </Box>
+                </Container>
+            )}
         </>
     );
 };

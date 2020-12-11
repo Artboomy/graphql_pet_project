@@ -1,0 +1,16 @@
+.bannerImage {
+    background-position: 50% 35%;
+    height: 25vh;
+    background-size: cover;
+    margin-top: -5vh;
+    opacity: 0.8;
+}
+
+.coverImage {
+    width: 215px;
+    height: 300px;
+    margin-top: -100px;
+    flex-shrink: 0;
+    background-color: attr(data-color);
+    z-index: 2;
+}

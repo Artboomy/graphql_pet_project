@@ -43,10 +43,6 @@ export interface SearchAnime_Page_media_title {
      * The romanization of the native language title
      */
     romaji: string | null;
-    /**
-     * Official title in it's native language
-     */
-    native: string | null;
 }
 
 export interface SearchAnime_Page_media {
