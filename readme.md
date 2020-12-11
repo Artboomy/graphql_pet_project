@@ -26,8 +26,6 @@ Server-side rendering provided by Next.js.
 
 ## To do
 
-⬛ Generate d.ts for sass
-
 ## Possible continuations
 
 ⬛ Tag cloud (three.js?)

@@ -74,44 +74,47 @@ const MediaView = (props: IProps): JSX.Element => {
                     </div>
                 )}
                 <Container fixed>
-                    <Box display={'flex'} pt={4} style={{ height: '100vh' }}>
-                        <div
-                            title={'Cover image'}
-                            className={styles.coverImage}
+                    <Box pt={4} className={styles.mainGrid}>
+                        <Box
+                            className={styles.coverImageWrapper}
                             style={{
-                                ...(coverImage && {
-                                    backgroundImage: `url(${coverImage})`
-                                }),
                                 ...(bannerImage && {
                                     marginTop: '-100px'
                                 })
                             }}>
-                            {' '}
-                        </div>
-                        <Box pl={4}>
-                            <Box display={'flex'} alignItems={'center'}>
-                                <Typography variant={'h4'}>{title}</Typography>
-                                {Media.siteUrl && (
-                                    <a
-                                        href={Media.siteUrl}
-                                        style={{
-                                            display: 'flex',
-                                            marginLeft: '8px'
-                                        }}
-                                        target={'_blank'}
-                                        rel={'noreferrer'}>
-                                        <LinkIcon fontSize={'large'} />
-                                    </a>
-                                )}
-                            </Box>
-                            {description && (
-                                <div
-                                    dangerouslySetInnerHTML={createMarkup(
-                                        description
-                                    )}
+                            {coverImage ? (
+                                <img
+                                    src={coverImage}
+                                    className={styles.coverImage}
+                                    alt={'Cover image'}
                                 />
+                            ) : (
+                                <div>Cover Image</div>
                             )}
                         </Box>
+                        <Box display={'flex'} className={styles.gridTitle}>
+                            <Typography variant={'h4'}>{title}</Typography>
+                            {Media.siteUrl && (
+                                <a
+                                    href={Media.siteUrl}
+                                    style={{
+                                        display: 'flex',
+                                        marginLeft: '8px'
+                                    }}
+                                    target={'_blank'}
+                                    rel={'noreferrer'}>
+                                    <LinkIcon fontSize={'large'} />
+                                </a>
+                            )}
+                        </Box>
+                        {description && (
+                            <div
+                                className={styles.gridDescription}
+                                dangerouslySetInnerHTML={createMarkup(
+                                    description
+                                )}
+                            />
+                        )}
                     </Box>
                 </Container>
             </>

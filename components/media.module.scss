@@ -6,9 +6,51 @@
     opacity: 0.8;
 }
 
-.coverImage {
-    width: 215px;
-    background-repeat: no-repeat;
+$break: 760px;
+
+.coverImageWrapper {
+    object-fit: contain;
     flex-shrink: 0;
     z-index: 2;
+    width: 215px;
+
+    @media screen and (max-width: $break) {
+        width: 100px;
+        grid-row: 1;
+    }
+
+    grid-column: 1;
+    grid-row: 1/3;
+}
+
+.coverImage {
+    max-width: 100%;
+
+    @media screen and (max-width: $break) {
+        max-width: 100px;
+    }
+}
+
+.mainGrid {
+    display: grid;
+    gap: 16px;
+
+    @media screen and (max-width: $break) {
+        grid-template-columns: 100px auto;
+    }
+}
+
+.gridTitle {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.gridDescription {
+    grid-column: 2;
+    grid-row: 2/3;
+
+    @media screen and (max-width: $break) {
+        grid-column: 1/3;
+        grid-row: 2;
+    }
 }
