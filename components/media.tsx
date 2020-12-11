@@ -12,6 +12,7 @@ import {
 import sanitizeHtml from 'sanitize-html';
 import styles from './media.module.scss';
 import LinkIcon from '@material-ui/icons/Link';
+import ErrorView from './error';
 
 interface IProps {
     id: string;
@@ -37,23 +38,6 @@ const VIEW = gql`
 `;
 const theme = createMuiTheme();
 
-const errorRender = (errorMessage: string) => (
-    <Box
-        display={'flex'}
-        justifyContent={'center'}
-        flexDirection={'column'}
-        alignItems={'center'}
-        minHeight={'100vh'}>
-        <Typography variant={'h2'} color={'error'} align={'center'}>
-            An error occurred
-        </Typography>
-        {errorMessage && (
-            <Typography variant={'h6'} color={'textSecondary'} align={'center'}>
-                {errorMessage}
-            </Typography>
-        )}
-    </Box>
-);
 const loadingRender = () => (
     <Backdrop
         open={true}
@@ -90,7 +74,7 @@ const MediaView = (props: IProps): JSX.Element => {
                     </div>
                 )}
                 <Container fixed>
-                    <Box display={'flex'} pt={4}>
+                    <Box display={'flex'} pt={4} style={{ height: '100vh' }}>
                         <div
                             title={'Cover image'}
                             className={styles.coverImage}
@@ -135,11 +119,13 @@ const MediaView = (props: IProps): JSX.Element => {
     };
     return (
         <Container disableGutters={true} maxWidth={false}>
-            {loading
-                ? loadingRender()
-                : data && data.Media
-                ? dataRender(data.Media)
-                : errorRender(error?.message || 'Unknown error')}
+            {loading ? (
+                loadingRender()
+            ) : data && data.Media ? (
+                dataRender(data.Media)
+            ) : (
+                <ErrorView errorMessage={error?.message || 'Unknown error'} />
+            )}
         </Container>
     );
 };

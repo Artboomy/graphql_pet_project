@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { SearchAnime } from '../types/SearchAnime';
+import { SearchAnime, SearchAnime_Page } from '../types/SearchAnime';
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
+    Box,
     Container,
     Link,
     Paper,
@@ -11,8 +12,10 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    Typography
 } from '@material-ui/core';
+import ErrorView from './error';
 
 interface IProps {
     search: string;
@@ -43,6 +46,31 @@ const SEARCH = gql`
         }
     }
 `;
+const loadingRender = () => (
+    <Container>
+        {Array(10).fill(
+            <Skeleton
+                variant='text'
+                height={53}
+                component={'div'}
+                animation={'wave'}
+            />
+        )}
+    </Container>
+);
+
+const emptyRender = () => (
+    <Box
+        display={'flex'}
+        justifyContent={'center'}
+        flexDirection={'column'}
+        alignItems={'center'}
+        pt={8}>
+        <Typography variant={'h2'} align={'center'}>
+            No results
+        </Typography>
+    </Box>
+);
 
 const List = React.memo(
     (props: IProps): JSX.Element => {
@@ -53,31 +81,21 @@ const List = React.memo(
                 search: props.search
             }
         });
-        const loadingRender = () => (
-            <Container>
-                {Array(10).fill(
-                    <Skeleton
-                        variant='text'
-                        height={53}
-                        component={'div'}
-                        animation={'wave'}
-                    />
-                )}
-            </Container>
+        const tableHead = (
+            <TableHead>
+                <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell align={'right'}>Episodes</TableCell>
+                    <TableCell align={'right'}>Score</TableCell>
+                    <TableCell align={'right'}>Season</TableCell>
+                </TableRow>
+            </TableHead>
         );
-        const errorRender = () => 'Error';
-        const dataRender = (page: SearchAnime['Page']) => {
+        const dataRender = (page: SearchAnime_Page) => {
             return (
                 <TableContainer component={Paper}>
                     <Table aria-label={'results table'}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell align={'right'}>Episodes</TableCell>
-                                <TableCell align={'right'}>Score</TableCell>
-                                <TableCell align={'right'}>Season</TableCell>
-                            </TableRow>
-                        </TableHead>
+                        {tableHead}
                         <TableBody>
                             {page?.media?.map((row) => {
                                 const romaji = row?.title?.romaji;
@@ -116,16 +134,17 @@ const List = React.memo(
                 </TableContainer>
             );
         };
-        data && console.log(data);
         return (
             <div>
-                {loading && loadingRender()}
-                {error && errorRender()}
-                {!loading &&
-                    !error &&
-                    (data?.Page?.media?.length
-                        ? dataRender(data.Page)
-                        : 'No results')}
+                {loading ? (
+                    loadingRender()
+                ) : error ? (
+                    <ErrorView errorMessage={error.message} />
+                ) : data?.Page?.media?.length ? (
+                    <Box pt={1}>{dataRender(data.Page)}</Box>
+                ) : (
+                    emptyRender()
+                )}
             </div>
         );
     }

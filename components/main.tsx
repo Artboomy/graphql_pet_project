@@ -76,7 +76,7 @@ const Main = (): JSX.Element => {
                 </Container>
             ) : (
                 <Container>
-                    <Box p={2}>
+                    <Box pt={8}>
                         <Typography variant={'h2'} align={'center'}>
                             Welcome!
                         </Typography>
