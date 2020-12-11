@@ -7,6 +7,8 @@
     "scripts": {
         "postinstall": "npx husky install && npx husky add pre-commit \"npm lint\"",
         "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
         "typegen": "apollo client:codegen types -c=apollo.config.js --localSchemaFile=schema.graphql --target=typescript --outputFlat --globalTypesFile=\"./types/global.d.ts\"",
         "typegen:watch": "apollo client:codegen types -c=apollo.config.js --localSchemaFile=schema.graphql --target=typescript --outputFlat --globalTypesFile=\"./types/global.d.ts\" --watch",
         "prettify": "npx prettier --write .",
