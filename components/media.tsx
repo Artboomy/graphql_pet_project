@@ -1,9 +1,17 @@
 import * as React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { ViewMedia, ViewMedia_Media } from '../types/ViewMedia';
-import { Box, Container, Typography } from '@material-ui/core';
+import {
+    Backdrop,
+    Box,
+    CircularProgress,
+    Container,
+    createMuiTheme,
+    Typography
+} from '@material-ui/core';
 import sanitizeHtml from 'sanitize-html';
 import styles from './media.module.scss';
+import LinkIcon from '@material-ui/icons/Link';
 
 interface IProps {
     id: string;
@@ -21,13 +29,38 @@ const VIEW = gql`
             siteUrl
             bannerImage
             coverImage {
-                color
                 large
             }
             description(asHtml: true)
         }
     }
 `;
+const theme = createMuiTheme();
+
+const errorRender = (errorMessage: string) => (
+    <Box
+        display={'flex'}
+        justifyContent={'center'}
+        flexDirection={'column'}
+        alignItems={'center'}
+        minHeight={'100vh'}>
+        <Typography variant={'h2'} color={'error'} align={'center'}>
+            An error occurred
+        </Typography>
+        {errorMessage && (
+            <Typography variant={'h6'} color={'textSecondary'} align={'center'}>
+                {errorMessage}
+            </Typography>
+        )}
+    </Box>
+);
+const loadingRender = () => (
+    <Backdrop
+        open={true}
+        style={{ backgroundColor: theme.palette.background.default }}>
+        <CircularProgress color={'secondary'} />
+    </Backdrop>
+);
 
 const MediaView = (props: IProps): JSX.Element => {
     const { data, loading, error } = useQuery<ViewMedia>(VIEW, {
@@ -35,21 +68,10 @@ const MediaView = (props: IProps): JSX.Element => {
             id: Number(props.id)
         }
     });
-    const loadingRender = () => 'Loading';
-    const errorRender = () => (
-        <>
-            <Typography variant={'h2'}>An error occurred.</Typography>
-            {error && <Typography variant={'h6'}>{error.message}</Typography>}
-        </>
-    );
     data && console.log(data);
     const dataRender = (Media: ViewMedia_Media) => {
-        const backgroundImage = Media.bannerImage;
-        const style = backgroundImage
-            ? { backgroundImage: `url(${backgroundImage})` }
-            : {};
+        const bannerImage = Media.bannerImage;
         const title = Media.title?.english || Media.title?.romaji;
-        const backgroundColor = Media.coverImage?.color || '#ccc';
         const coverImage = Media.coverImage?.large;
         let description = Media.description;
         description = description
@@ -60,35 +82,44 @@ const MediaView = (props: IProps): JSX.Element => {
         };
         return (
             <>
-                <div className={styles.bannerImage} style={style}>
-                    {' '}
-                </div>
+                {bannerImage && (
+                    <div
+                        className={styles.bannerImage}
+                        style={{ backgroundImage: `url(${bannerImage})` }}>
+                        {' '}
+                    </div>
+                )}
                 <Container fixed>
-                    <Box display={'flex'}>
+                    <Box display={'flex'} pt={4}>
                         <div
                             title={'Cover image'}
                             className={styles.coverImage}
                             style={{
-                                backgroundColor,
                                 ...(coverImage && {
                                     backgroundImage: `url(${coverImage})`
+                                }),
+                                ...(bannerImage && {
+                                    marginTop: '-100px'
                                 })
                             }}>
                             {' '}
                         </div>
                         <Box pl={4}>
-                            <Typography variant={'h5'}>
-                                {Media.siteUrl ? (
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Typography variant={'h4'}>{title}</Typography>
+                                {Media.siteUrl && (
                                     <a
                                         href={Media.siteUrl}
+                                        style={{
+                                            display: 'flex',
+                                            marginLeft: '8px'
+                                        }}
                                         target={'_blank'}
                                         rel={'noreferrer'}>
-                                        {title}
+                                        <LinkIcon fontSize={'large'} />
                                     </a>
-                                ) : (
-                                    title
                                 )}
-                            </Typography>
+                            </Box>
                             {description && (
                                 <div
                                     dangerouslySetInnerHTML={createMarkup(
@@ -108,7 +139,7 @@ const MediaView = (props: IProps): JSX.Element => {
                 ? loadingRender()
                 : data && data.Media
                 ? dataRender(data.Media)
-                : errorRender()}
+                : errorRender(error?.message || 'Unknown error')}
         </Container>
     );
 };

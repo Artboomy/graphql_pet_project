@@ -26,10 +26,6 @@ export interface ViewMedia_Media_title {
 export interface ViewMedia_Media_coverImage {
     __typename: 'MediaCoverImage';
     /**
-     * Average #hex color of cover image
-     */
-    color: string | null;
-    /**
      * The cover image url of the media at a large size
      */
     large: string | null;
