@@ -5,6 +5,7 @@ import {
     SearchAnime_Page,
     SearchAnime_Page_media
 } from '../types/SearchAnime';
+import ErrorView from './error';
 import styles from './list.module.scss';
 import Skeleton from '@material-ui/lab/Skeleton';
 import {
@@ -20,11 +21,8 @@ import {
     TableRow,
     Typography
 } from '@material-ui/core';
-import ErrorView from './error';
-
-interface IProps {
-    search: string;
-}
+import TablePagination from '@material-ui/core/TablePagination';
+import { useState } from 'react';
 
 interface IListData {
     id: number;
@@ -64,16 +62,16 @@ const SEARCH = gql`
     }
 `;
 
-const loadingRender = () => {
+const loadingRender = (perPage: number) => {
     const skeleton = (
         <Skeleton
             variant='text'
             component={'div'}
             animation={'wave'}
-            height={36}
+            height={21}
         />
     );
-    const skeletonRows: IListData[] = Array(5)
+    const skeletonRows: IListData[] = Array(perPage)
         .fill(null)
         .map((_, idx) => {
             return {
@@ -84,7 +82,7 @@ const loadingRender = () => {
                 season: skeleton
             };
         });
-    return tableRender(skeletonRows);
+    return <Box pt={1}>{tableRender(skeletonRows)}</Box>;
 };
 
 const emptyRender = () => (
@@ -129,16 +127,15 @@ const tableRender = (data: IListData[]) => {
         </TableRow>
     ));
     return (
-        <Box pt={1}>
-            <TableContainer component={Paper}>
-                <Table aria-label={'results table'}>
-                    {tableHead}
-                    <TableBody>{rows}</TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+        <TableContainer component={Paper}>
+            <Table aria-label={'results table'}>
+                {tableHead}
+                <TableBody>{rows}</TableBody>
+            </Table>
+        </TableContainer>
     );
 };
+
 const decorateScore = (score: number): JSX.Element => {
     const theme = createMuiTheme();
     let color;
@@ -152,20 +149,63 @@ const decorateScore = (score: number): JSX.Element => {
     return <div style={{ color: color.main }}>{`${score}%`}</div>;
 };
 
+interface IProps {
+    search: string;
+}
+
+const DEFAULT_PER_PAGE = 10;
 const List = React.memo(
     (props: IProps): JSX.Element => {
+        const [page, setPage] = useState(1);
+        const [perPage, setPerPage] = useState(DEFAULT_PER_PAGE);
+        const [lastSearch, setLastSearch] = useState(props.search);
+        let pageForQuery = page;
+        // Needed to reset page on search value changes
+        if (lastSearch !== props.search) {
+            setLastSearch(props.search);
+            pageForQuery = 1;
+            setPage(pageForQuery);
+        }
         const { loading, error, data } = useQuery<SearchAnime>(SEARCH, {
             variables: {
-                page: 0,
-                perPage: 10,
+                page: pageForQuery,
+                perPage,
                 search: props.search
             }
         });
+        // TODO: this makes whole table rerender, and pagination is blinking
+        const handleChangePage = (_: unknown, newPage: number) => {
+            setPage(newPage + 1);
+        };
+
+        const handleChangeRowsPerPage = (
+            event: React.ChangeEvent<HTMLInputElement>
+        ) => {
+            setPerPage(parseInt(event.target.value, 10));
+            setPage(1);
+        };
+
+        const paginationRender = (cfg: {
+            count: number;
+            perPage: number;
+            page: number;
+        }) => {
+            return (
+                <TablePagination
+                    component={'div'}
+                    rowsPerPageOptions={[5, DEFAULT_PER_PAGE, 25]}
+                    count={cfg.count}
+                    rowsPerPage={cfg.perPage}
+                    page={cfg.page - 1}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+            );
+        };
         const dataRender = (
             media: (SearchAnime_Page_media | null)[],
             pageInfo: SearchAnime_Page['pageInfo']
         ) => {
-            console.info('PageInfo is ', pageInfo);
             const mediaList: SearchAnime_Page_media[] = media.filter(notEmpty);
             const rows: IListData[] = mediaList.map((row) => {
                 const romaji = row.title?.romaji;
@@ -197,14 +237,32 @@ const List = React.memo(
                     )
                 };
             });
-            return tableRender(rows);
+            const paginationCfg =
+                pageInfo?.perPage &&
+                pageInfo.currentPage &&
+                pageInfo.total &&
+                pageInfo.total > pageInfo.perPage
+                    ? {
+                          count: pageInfo.total,
+                          perPage: pageInfo.perPage,
+                          page: pageInfo.currentPage
+                      }
+                    : null;
+            return (
+                <Box pt={1}>
+                    <Paper>
+                        {tableRender(rows)}
+                        {paginationCfg && paginationRender(paginationCfg)}
+                    </Paper>
+                </Box>
+            );
         };
         const mediaList = data?.Page?.media || [];
         const pageInfo = data?.Page?.pageInfo;
         return (
             <div>
                 {loading ? (
-                    loadingRender()
+                    loadingRender(perPage)
                 ) : error ? (
                     <ErrorView errorMessage={error.message} />
                 ) : mediaList.length && pageInfo ? (

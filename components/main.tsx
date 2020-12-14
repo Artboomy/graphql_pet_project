@@ -35,7 +35,7 @@ const Main = (): JSX.Element => {
                 <Toolbar>
                     <Box display={'flex'} alignItems={'baseline'}>
                         <Box pr={1}>
-                            <Typography variant={'h6'}>Sample App</Typography>
+                            <Typography variant={'h6'}>App</Typography>
                         </Box>
                         <div className={styles.searchWrapper}>
                             <InputBase
