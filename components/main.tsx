@@ -39,6 +39,10 @@ const Main = (): JSX.Element => {
                         </Box>
                         <div className={styles.searchWrapper}>
                             <InputBase
+                                inputProps={{
+                                    'aria-label': 'Search input',
+                                    tabIndex: 1
+                                }}
                                 placeholder={'Anime name'}
                                 value={searchText}
                                 classes={{

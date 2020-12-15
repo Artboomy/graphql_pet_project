@@ -119,7 +119,7 @@ const MediaPage = (): JSX.Element => {
             )}
             <Box className={styles.fabButton}>
                 <Link href={'/'}>
-                    <Fab color={'secondary'}>
+                    <Fab color={'secondary'} aria-label={'Home'}>
                         <HomeIcon />
                     </Fab>
                 </Link>

@@ -42,17 +42,23 @@ const MediaView = (props: IProps): JSX.Element => {
                             <img
                                 src={coverImage}
                                 className={styles.coverImage}
-                                alt={'Cover image'}
+                                alt={'Main image'}
                             />
                         ) : (
-                            <div>Cover Image</div>
+                            <div>Main Image</div>
                         )}
                     </Box>
-                    <Box display={'flex'} className={styles.gridTitle}>
-                        <Typography variant={'h4'}>{title}</Typography>
+                    <Box
+                        display={'flex'}
+                        className={styles.gridTitle}
+                        component={'header'}>
+                        <Typography variant={'h4'} tabIndex={0}>
+                            {title}
+                        </Typography>
                         {Media.siteUrl && (
                             <a
                                 href={Media.siteUrl}
+                                aria-label={'Link to the AniList site'}
                                 style={{
                                     display: 'flex',
                                     marginLeft: '8px'
@@ -64,8 +70,9 @@ const MediaView = (props: IProps): JSX.Element => {
                         )}
                     </Box>
                     {description && (
-                        <div
+                        <article
                             className={styles.gridDescription}
+                            tabIndex={0}
                             dangerouslySetInnerHTML={createMarkup(description)}
                         />
                     )}
