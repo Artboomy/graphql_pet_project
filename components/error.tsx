@@ -1,7 +1,7 @@
 import { Box, Typography } from '@material-ui/core';
 import * as React from 'react';
 
-const ErrorView = (cfg: { errorMessage: string }): JSX.Element => (
+const ErrorView = (cfg: { errorMessage?: string }): JSX.Element => (
     <Box
         display={'flex'}
         justifyContent={'center'}
@@ -11,11 +11,9 @@ const ErrorView = (cfg: { errorMessage: string }): JSX.Element => (
         <Typography variant={'h2'} color={'error'} align={'center'}>
             An error occurred
         </Typography>
-        {cfg.errorMessage && (
-            <Typography variant={'h6'} color={'textSecondary'} align={'center'}>
-                {cfg.errorMessage}
-            </Typography>
-        )}
+        <Typography variant={'h6'} color={'textSecondary'} align={'center'}>
+            {cfg.errorMessage || 'Details unknown'}
+        </Typography>
     </Box>
 );
 

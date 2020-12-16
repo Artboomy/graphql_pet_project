@@ -91,7 +91,7 @@ const MediaPageView = (props: { id: number }): JSX.Element => {
             ) : data && data.Media ? (
                 <MediaView media={data.Media} />
             ) : (
-                <ErrorView errorMessage={error?.message || 'Unknown error'} />
+                <ErrorView errorMessage={error?.message} />
             )}
         </Container>
     );

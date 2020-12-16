@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renders default message 1`] = `
+<div
+  className="MuiBox-root MuiBox-root-2"
+>
+  <h2
+    className="MuiTypography-root MuiTypography-h2 MuiTypography-colorError MuiTypography-alignCenter"
+  >
+    An error occurred
+  </h2>
+  <h6
+    className="MuiTypography-root MuiTypography-h6 MuiTypography-colorTextSecondary MuiTypography-alignCenter"
+  >
+    Details unknown
+  </h6>
+</div>
+`;
+
+exports[`Renders passed message 1`] = `
+<div
+  className="MuiBox-root MuiBox-root-1"
+>
+  <h2
+    className="MuiTypography-root MuiTypography-h2 MuiTypography-colorError MuiTypography-alignCenter"
+  >
+    An error occurred
+  </h2>
+  <h6
+    className="MuiTypography-root MuiTypography-h6 MuiTypography-colorTextSecondary MuiTypography-alignCenter"
+  >
+    Test error message
+  </h6>
+</div>
+`;
