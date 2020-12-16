@@ -7,6 +7,13 @@
     background-color: rgba(255, 255, 255, 0.15);
     padding: 4px 4px 4px 8px;
     border-radius: 2px;
+    height: 43px;
+    // Strict width to prevent size flash on load
+    width: 192px;
+
+    @media screen and (max-width: 360px) {
+        width: 160px;
+    }
 }
 
 .searchInput {
